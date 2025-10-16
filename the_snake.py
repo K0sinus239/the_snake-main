@@ -46,7 +46,7 @@ class GameObject:
     def draw(self):
         """Отрисовка объекта."""
         return NotImplementedError(
-            "Потомок должен реализовать родительский класс draw")
+            'Потомок должен реализовать родительский класс draw')
 
     def draw_rect(self, position):
         """Отрисовка прямоугольника."""
