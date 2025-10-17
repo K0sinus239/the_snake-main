@@ -61,18 +61,18 @@ class Apple(GameObject):
     Наследуется от класса GameObject.
     """
 
-    def __init__(self):
-        super().__init__(APPLE_COLOR)
+    def __init__(self, body_color=APPLE_COLOR):
+        super().__init__(body_color)
         self.new_position = None
 
-    def randomize_position(self, snake):
+    def randomize_position(self, busy_position):
         """Размещение в случайном месте игрового поля."""
         while True:
             new_position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                 randint(0, GRID_HEIGHT - 1) * GRID_SIZE
             )
-            if new_position not in snake.positions:
+            if new_position not in busy_position:
                 self.position = new_position
                 break
 
@@ -87,8 +87,8 @@ class Snake(GameObject):
     Наследуется от класса GameObject.
     """
 
-    def __init__(self):
-        super().__init__(SNAKE_COLOR)
+    def __init__(self, body_color=SNAKE_COLOR):
+        super().__init__(body_color)
         self.reset()
         self.last = None
 
@@ -98,8 +98,6 @@ class Snake(GameObject):
         self.positions = [self.position]
         self.direction = RIGHT
         self.next_direction = None
-        screen.fill(BOARD_BACKGROUND_COLOR)
-        pg.display.update()
 
     def update_direction(self):
         """Обновление направления."""
@@ -155,7 +153,8 @@ def main():
     pg.init()
     apple = Apple()
     snake = Snake()
-    apple.randomize_position(snake)
+    busy = set(snake.positions)
+    apple.randomize_position(busy)
     while True:
         clock.tick(SPEED)
         handle_keys(snake)
@@ -163,10 +162,10 @@ def main():
         snake.move()
         if snake.get_head_position() in snake.positions[1:]:
             snake.reset()
-            return
-        if snake.get_head_position() == apple.position:
+        elif snake.get_head_position() == apple.position:
             snake.length += 1
-            apple.randomize_position(snake)
+            apple.randomize_position(snake.positions)
+        screen.fill(BOARD_BACKGROUND_COLOR)
         apple.draw()
         snake.draw()
         pg.display.update()
